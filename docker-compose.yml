@@ -1,0 +1,20 @@
+# Docker Compose for Assembly Echo Server
+# Useful for running on macOS or Windows via Docker
+
+services:
+  asm-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    command: ["8080"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+# Usage:
+# docker-compose up -d
+# curl http://localhost:8082/

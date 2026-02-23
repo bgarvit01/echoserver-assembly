@@ -1,0 +1,19 @@
+# Build artifacts
+echoserver
+echoserver_x86
+echoserver_arm64
+*.o
+
+# macOS
+.DS_Store
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local env (e.g. for docker-compose overrides)
+.env
+.env.local

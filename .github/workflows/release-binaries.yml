@@ -1,0 +1,50 @@
+# Build Linux binaries (x86_64 and ARM64) and attach them to GitHub Release when a version tag is pushed.
+
+name: Release binaries
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # create release and upload assets
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Install build tools (x86_64 + ARM64 cross)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm binutils gcc-aarch64-linux-gnu
+
+      - name: Build x86_64
+        run: make x86_64
+
+      - name: Build ARM64 (cross-compile)
+        run: make arm64 ASM_ARM=aarch64-linux-gnu-as ARM_LD=aarch64-linux-gnu-ld
+
+      - name: Prepare release assets
+        run: |
+          chmod +x echoserver_x86 echoserver_arm64
+          cp echoserver_x86 echoserver-linux-amd64
+          cp echoserver_arm64 echoserver-linux-arm64
+
+      - name: Create Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          draft: false
+          files: |
+            echoserver-linux-amd64
+            echoserver-linux-arm64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

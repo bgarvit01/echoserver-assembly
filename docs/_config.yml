@@ -1,0 +1,5 @@
+# GitHub Pages / Jekyll config for echoserver-assembly docs
+title: "Echo Server (Assembly)"
+description: "Minimal HTTP echo server in x86_64 and ARM64 assembly for Linux"
+theme: jekyll-theme-minimal
+markdown: kramdown
